@@ -9,8 +9,11 @@
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  <app-no-habit *ngIf="habits.length === 0"></app-no-habit>
-  <ion-list *ngIf="habits.length > 0">
+  <app-no-habit *ngIf="habits.length <= 0 && !isLoading"></app-no-habit>
+  <div *ngIf="isLoading" class="w-100 text-center">
+    <ion-spinner></ion-spinner>
+  </div>
+  <ion-list *ngIf="habits.length > 0 && !isLoading">
     <div *ngFor="let habit of habits">
       <app-habit [habit]="habit"></app-habit>
     </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { PickerController } from "@ionic/angular";
+import { PickerController, LoadingController } from "@ionic/angular";
 import { newHabitService } from "src/app/services/new-habit.service";
 import { stringify } from "@angular/compiler/src/util";
 import { JournalService } from "src/app/services/journal.service";
@@ -28,7 +28,8 @@ export class AddHabitPage implements OnInit {
     private pickerController: PickerController,
     private newHabitSrv: newHabitService,
     private journalSrv: JournalService,
-    private router: Router
+    private router: Router,
+    private loadingCtrl: LoadingController
   ) {}
 
   ngOnInit() {
@@ -138,13 +139,22 @@ export class AddHabitPage implements OnInit {
     this.habitObj.repeat = event.detail.value;
     console.log(event);
   };
-  onAddHabit = () => {
-    this.journalSrv.addHabit(
-      this.habitObj.id,
-      this.habitObj.title,
-      this.habitObj.repeat,
-      this.habitObj.goals
-    );
-    this.router.navigate(["/"]);
+  onAddHabit = async () => {
+    const loading = await this.loadingCtrl.create({
+      cssClass: "my-custom-class",
+      message: "Please wait...",
+    });
+    await loading.present();
+    this.journalSrv
+      .addHabit(
+        this.habitObj.id,
+        this.habitObj.title,
+        this.habitObj.repeat,
+        this.habitObj.goals
+      )
+      .subscribe(() => {
+        this.loadingCtrl.dismiss();
+        this.router.navigate(["/"]);
+      });
   };
 }
