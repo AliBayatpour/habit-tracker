@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>New Habit</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-card
+          class="ion-text-center"
+          button
+          (click)="addHabit('Read Books')"
+        >
+          <img src="assets/new-habits/reading.svg" />
+          <div>
+            <ion-card-header>
+              <ion-card-title><h6>Read Books</h6></ion-card-title>
+            </ion-card-header>
+          </div>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6">
+        <ion-card class="ion-text-center" button (click)="addHabit('Gym')">
+          <img src="assets/new-habits/gym.svg" />
+          <div>
+            <ion-card-header>
+              <ion-card-title><h6>Gym</h6></ion-card-title>
+            </ion-card-header>
+          </div>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6">
+        <ion-card
+          class="ion-text-center"
+          button
+          (click)="addHabit('School Assignment')"
+        >
+          <img src="assets/new-habits/write.svg" />
+          <div>
+            <ion-card-header>
+              <ion-card-title><h6>School Assignment</h6></ion-card-title>
+            </ion-card-header>
+          </div>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6">
+        <ion-card
+          class="ion-text-center"
+          button
+          (click)="createHabit()"
+        >
+          <ion-icon name="add-circle"></ion-icon>
+          <div>
+            <ion-card-header>
+              <ion-card-title><h6>School Assignment</h6></ion-card-title>
+            </ion-card-header>
+          </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
