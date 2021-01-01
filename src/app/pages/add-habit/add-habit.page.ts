@@ -23,6 +23,8 @@ export class AddHabitPage implements OnInit {
       unit: "mins",
       perUnit: "day",
     },
+    startDate: new Date(),
+    records: [],
   };
   constructor(
     private pickerController: PickerController,
@@ -150,7 +152,9 @@ export class AddHabitPage implements OnInit {
         this.habitObj.id,
         this.habitObj.title,
         this.habitObj.repeat,
-        this.habitObj.goals
+        this.habitObj.goals,
+        this.habitObj.startDate,
+        this.habitObj.records
       )
       .subscribe(() => {
         this.loadingCtrl.dismiss();

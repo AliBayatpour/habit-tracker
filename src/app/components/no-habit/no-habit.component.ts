@@ -10,7 +10,4 @@ export class NoHabitComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {}
-  addHabit = () => {
-    
-  }
 }

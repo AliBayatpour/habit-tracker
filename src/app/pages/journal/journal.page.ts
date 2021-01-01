@@ -12,12 +12,24 @@ import { Subscription } from "rxjs";
 export class JournalPage implements OnInit, OnDestroy {
   habits: Habit[];
   isLoading = false;
+  todayHabits = [];
+  weekday = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
   private habitsSub: Subscription;
   constructor(private journalSrv: JournalService) {}
 
   ngOnInit() {
     this.habitsSub = this.journalSrv.habits.subscribe((habits) => {
       this.habits = habits;
+      let todayDate = new Date();
+      this.setTodayHabits(habits, this.weekday[todayDate.getDay()]);
     });
   }
   ionViewWillEnter() {
@@ -31,4 +43,27 @@ export class JournalPage implements OnInit, OnDestroy {
       this.habitsSub.unsubscribe();
     }
   }
+  eventSource = [];
+  calendar = {
+    mode: "week",
+    currentDate: new Date(),
+  };
+  onCurrentDateChanged = () => {};
+  reloadSource = () => {};
+  onEventSelected = (event) => {
+    console.log(event);
+  };
+  onViewTitleChanged = () => {};
+  onTimeSelected = (event) => {
+    this.setTodayHabits(this.habits, this.weekday[event.selectedTime.getDay()]);
+  };
+  setTodayHabits = (habits: Habit[], todayDay: string) => {
+    this.todayHabits = [];
+    habits.forEach((habit) => {
+      if (habit.repeat.includes(todayDay)) {
+        console.log(habit);
+        this.todayHabits.push(habit);
+      }
+    });
+  };
 }

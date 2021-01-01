@@ -2,11 +2,11 @@
   <ion-item>
     <div class="d-flex flex-column">
       <ion-text>
-        <ion-label>{{habit.title}}</ion-label>
+        <ion-label>{{ habit.title }}</ion-label>
       </ion-text>
       <ion-text color="medium" class="subTitle">
         <ion-label
-          >0/{{habit.goals.numOption}} {{habit.goals.perUnit}}</ion-label
+          >0/{{ habit.goals.numOption }} {{ habit.goals.unit }} today</ion-label
         >
       </ion-text>
     </div>
@@ -15,5 +15,6 @@
     <ion-item-option color="danger" (click)="onDeleteHabit(habit.id)"
       >Delete</ion-item-option
     >
+    <ion-item-option color="primary">Finished</ion-item-option>
   </ion-item-options>
 </ion-item-sliding>

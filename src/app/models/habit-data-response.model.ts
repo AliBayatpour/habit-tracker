@@ -7,4 +7,6 @@ interface habitData {
   repeat: string[];
   title: string;
   userId: any;
+  startDate: Date,
+  records: any;
 }

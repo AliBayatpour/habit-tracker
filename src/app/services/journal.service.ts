@@ -29,7 +29,9 @@ export class JournalService {
                   resData[key].title,
                   resData[key].repeat,
                   resData[key].userId,
-                  resData[key].goals
+                  resData[key].goals,
+                  resData[key].startDate,
+                  resData[key].records
                 )
               );
             }
@@ -55,14 +57,23 @@ export class JournalService {
     );
   };
   deleteHabit = (habitId: string) => {
-    console.log(this._habits);
-    this._habits.pipe(take(1)).subscribe((habits) => {
-      this._habits.next(
-        habits.filter((habit) => {
-          return habit.id !== habitId;
+    return this.http
+      .delete(
+        `https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/habits/${habitId}.json`
+      )
+      .pipe(
+        switchMap(() => {
+          return this.habits;
+        }),
+        take(1),
+        tap((habits) => {
+          this._habits.next(
+            habits.filter((habit) => {
+              return habit.id !== habitId;
+            })
+          );
         })
       );
-    });
   };
   addHabit = (
     id: string,
@@ -72,32 +83,42 @@ export class JournalService {
       numOption: string;
       unit: "mins" | "times";
       perUnit: "day" | "week" | "month";
-    }
+    },
+    startDate: Date,
+    records: any
   ) => {
     let generatedId: string;
-    const newHabit = new Habit(id, title, repeat, this.authSrv.userId, goals);
-    // this._habits.pipe(
-    //   take(1),
-    //   tap((habits) => {
-    //     this._habits.next(habits.concat(newHabit));
-    //   })
-    // );
-    console.log("hi");
-    return this.http
-      .post<{ name: string }>(
-        "https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/habits.json",
-        { ...newHabit, id: null }
-      )
-      .pipe(
-        switchMap((resData) => {
-          generatedId = resData.name;
-          return this.habits;
-        }),
-        take(1),
-        tap((habits) => {
-          newHabit.id = generatedId;
-          this._habits.next(habits.concat(newHabit));
-        })
-      );
+    let newHabit: Habit;
+    return this.authSrv.userId.pipe(
+      take(1),
+      switchMap((userId) => {
+        if (!userId) {
+          throw new Error("No user id found");
+        }
+        newHabit = new Habit(
+          id,
+          title,
+          repeat,
+          userId,
+          goals,
+          startDate,
+          records
+        );
+        console.log(newHabit);
+        return this.http.post<{ name: string }>(
+          "https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/habits.json",
+          { ...newHabit, id: null }
+        );
+      }),
+      switchMap((resData) => {
+        generatedId = resData.name;
+        return this.habits;
+      }),
+      take(1),
+      tap((habits) => {
+        newHabit.id = generatedId;
+        this._habits.next(habits.concat(newHabit));
+      })
+    );
   };
 }

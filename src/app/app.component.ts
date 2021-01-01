@@ -23,6 +23,5 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
-    document.body.setAttribute("color-theme", "dark");
   }
 }
