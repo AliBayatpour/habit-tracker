@@ -10,6 +10,6 @@ export class Habit {
       perUnit: "day" | "week" | "month";
     },
     public startDate: Date,
-    public records: any
+    public records?: any
   ) {}
 }

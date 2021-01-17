@@ -11,7 +11,9 @@ import { HttpClient } from "@angular/common/http";
 export class JournalService {
   private _habits = new BehaviorSubject<Habit[]>([]);
   constructor(private authSrv: AuthService, private http: HttpClient) {}
-  fetchPlaces = () => {
+  fetchHabits = () => {
+    let habits = [];
+    let myHabits = [];
     return this.http
       .get<{
         [key: string]: habitData;
@@ -20,7 +22,6 @@ export class JournalService {
       )
       .pipe(
         map((resData) => {
-          const habits = [];
           for (const key in resData) {
             if (resData.hasOwnProperty(key)) {
               habits.push(
@@ -38,8 +39,20 @@ export class JournalService {
           }
           return habits;
         }),
-        tap((habits) => {
-          this._habits.next(habits);
+        switchMap(() => {
+          return this.authSrv.userId;
+        }),
+        take(1),
+        map((userId) => {
+          habits.forEach((habit: Habit) => {
+            if (habit.userId === userId) {
+              myHabits.push(habit);
+            }
+          });
+          return myHabits;
+        }),
+        tap((myHabits) => {
+          this._habits.next(myHabits);
         })
       );
   };
@@ -104,7 +117,6 @@ export class JournalService {
           startDate,
           records
         );
-        console.log(newHabit);
         return this.http.post<{ name: string }>(
           "https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/habits.json",
           { ...newHabit, id: null }
@@ -118,6 +130,33 @@ export class JournalService {
       tap((habits) => {
         newHabit.id = generatedId;
         this._habits.next(habits.concat(newHabit));
+      })
+    );
+  };
+  updateHabit = (id: string, newRecord: Date[]) => {
+    let updatedHabits: Habit[];
+    return this.habits.pipe(
+      take(1),
+      switchMap((habits) => {
+        const updatedHabitIndex = habits.findIndex((habit) => habit.id === id);
+        updatedHabits = [...habits];
+        const oldHabit = updatedHabits[updatedHabitIndex];
+        updatedHabits[updatedHabitIndex] = new Habit(
+          oldHabit.id,
+          oldHabit.title,
+          oldHabit.repeat,
+          oldHabit.userId,
+          oldHabit.goals,
+          oldHabit.startDate,
+          newRecord
+        );
+        return this.http.put(
+          `https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/habits/${id}.json`,
+          { ...updatedHabits[updatedHabitIndex], id: null }
+        );
+      }),
+      tap(() => {
+        this._habits.next(updatedHabits);
       })
     );
   };

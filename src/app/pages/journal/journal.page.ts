@@ -3,6 +3,8 @@ import { Habit } from "src/app/models/habit.model";
 import { JournalService } from "src/app/services/journal.service";
 import { AlertController, LoadingController } from "@ionic/angular";
 import { Subscription } from "rxjs";
+import { habitService } from "src/app/services/habit.service";
+import { DateTimeService } from "src/app/services/date-time.service";
 
 @Component({
   selector: "app-journal",
@@ -12,7 +14,8 @@ import { Subscription } from "rxjs";
 export class JournalPage implements OnInit, OnDestroy {
   habits: Habit[];
   isLoading = false;
-  todayHabits = [];
+  currentDayHabits = [];
+  currentDate = new Date();
   weekday = [
     "Sunday",
     "Monday",
@@ -23,18 +26,22 @@ export class JournalPage implements OnInit, OnDestroy {
     "Saturday",
   ];
   private habitsSub: Subscription;
-  constructor(private journalSrv: JournalService) {}
+  private currentHabitsSub: Subscription;
+  constructor(
+    private journalSrv: JournalService,
+    private dateTimeSrv: DateTimeService
+  ) {}
 
   ngOnInit() {
     this.habitsSub = this.journalSrv.habits.subscribe((habits) => {
       this.habits = habits;
       let todayDate = new Date();
-      this.setTodayHabits(habits, this.weekday[todayDate.getDay()]);
+      this.setHabits(todayDate);
     });
   }
   ionViewWillEnter() {
     this.isLoading = true;
-    this.journalSrv.fetchPlaces().subscribe((resData) => {
+    this.journalSrv.fetchHabits().subscribe((resData) => {
       this.isLoading = false;
     });
   }
@@ -48,21 +55,33 @@ export class JournalPage implements OnInit, OnDestroy {
     mode: "week",
     currentDate: new Date(),
   };
-  onCurrentDateChanged = () => {};
-  reloadSource = () => {};
-  onEventSelected = (event) => {
-    console.log(event);
-  };
-  onViewTitleChanged = () => {};
   onTimeSelected = (event) => {
-    this.setTodayHabits(this.habits, this.weekday[event.selectedTime.getDay()]);
+    this.currentDate = new Date(event.selectedTime);
+    this.setHabits(event.selectedTime);
   };
-  setTodayHabits = (habits: Habit[], todayDay: string) => {
-    this.todayHabits = [];
-    habits.forEach((habit) => {
-      if (habit.repeat.includes(todayDay)) {
-        console.log(habit);
-        this.todayHabits.push(habit);
+
+  setHabits = (date: Date) => {
+    let todayDay = this.weekday[date.getDay()];
+    let currentDateWithoutTime = this.dateTimeSrv.dateWithouttime(date);
+    this.currentDayHabits = [];
+    this.habits.forEach((habit: Habit) => {
+      let convertedHabitStartDate = new Date(habit.startDate);
+      let startDateWithoutTime = this.dateTimeSrv.dateWithouttime(
+        convertedHabitStartDate
+      );
+      if (currentDateWithoutTime.getTime() >= startDateWithoutTime.getTime()) {
+        if (habit.repeat.includes(todayDay)) {
+          let habitRecords = habit.records ? habit.records : [];
+          this.currentDayHabits.push({
+            id: habit.id,
+            title: habit.title,
+            repeat: habit.repeat,
+            userId: habit.userId,
+            goals: habit.goals,
+            startDate: habit.startDate,
+            records: habitRecords,
+          });
+        }
       }
     });
   };

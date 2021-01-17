@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { newHabitService } from "src/app/services/new-habit.service";
+import { habitService } from "src/app/services/habit.service";
 import { Router } from "@angular/router";
 import { ModalController } from "@ionic/angular";
 import { CreateHabitComponent } from "src/app/components/modals/create-habit/create-habit.component";
@@ -11,7 +11,7 @@ import { CreateHabitComponent } from "src/app/components/modals/create-habit/cre
 })
 export class NewHabitPage implements OnInit {
   constructor(
-    private newHabitSrv: newHabitService,
+    private newHabitSrv: habitService,
     private router: Router,
     private modalCtrl: ModalController
   ) {}

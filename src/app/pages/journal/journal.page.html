@@ -9,9 +9,6 @@
       [eventSource]="eventSource"
       [calendarMode]="calendar.mode"
       [currentDate]="calendar.currentDate"
-      (onCurrentDateChanged)="onCurrentDateChanged($event)"
-      (onEventSelected)="onEventSelected($event)"
-      (onTitleChanged)="onViewTitleChanged($event)"
       (onTimeSelected)="onTimeSelected($event)"
       startingDayWeek="1"
     >
@@ -22,13 +19,15 @@
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  <app-no-habit *ngIf="todayHabits.length <= 0 && !isLoading"></app-no-habit>
+  <app-no-habit
+    *ngIf="currentDayHabits.length <= 0 && !isLoading"
+  ></app-no-habit>
   <div *ngIf="isLoading" class="w-100 text-center">
     <ion-spinner></ion-spinner>
   </div>
-  <ion-list *ngIf="todayHabits.length > 0 && !isLoading">
-    <div *ngFor="let habit of todayHabits">
-      <app-habit [habit]="habit"></app-habit>
+  <ion-list *ngIf="currentDayHabits.length > 0 && !isLoading">
+    <div *ngFor="let habit of currentDayHabits">
+      <app-habit [habit]="habit" [currentDate]="currentDate"></app-habit>
     </div>
   </ion-list>
 </ion-content>

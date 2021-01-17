@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { habitService } from './habit.service';
+import { DateTimeService } from './date-time.service';
 
-describe('newHabitService', () => {
-  let service: habitService;
+describe('DateTimeService', () => {
+  let service: DateTimeService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(habitService);
+    service = TestBed.inject(DateTimeService);
   });
 
   it('should be created', () => {

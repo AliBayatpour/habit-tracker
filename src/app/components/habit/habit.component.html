@@ -1,12 +1,27 @@
 <ion-item-sliding>
   <ion-item>
+    <ion-icon
+      slot="start"
+      name="checkmark-circle"
+      color="primary"
+      *ngIf="isFinished"
+    ></ion-icon>
+    <ion-icon
+      slot="start"
+      name="checkmark-circle-outline"
+      color="primary"
+      *ngIf="!isFinished"
+    ></ion-icon>
     <div class="d-flex flex-column">
       <ion-text>
         <ion-label>{{ habit.title }}</ion-label>
       </ion-text>
       <ion-text color="medium" class="subTitle">
         <ion-label
-          >0/{{ habit.goals.numOption }} {{ habit.goals.unit }} today</ion-label
+          >{{ isFinished ? habit.goals.numOption : 0 }}/{{
+            habit.goals.numOption
+          }}
+          {{ habit.goals.unit }} today</ion-label
         >
       </ion-text>
     </div>
@@ -15,6 +30,11 @@
     <ion-item-option color="danger" (click)="onDeleteHabit(habit.id)"
       >Delete</ion-item-option
     >
-    <ion-item-option color="primary">Finished</ion-item-option>
+    <ion-item-option
+      color="primary"
+      (click)="onFinishedHabit(habit)"
+      [disabled]="isFinished"
+      >Finished</ion-item-option
+    >
   </ion-item-options>
 </ion-item-sliding>
