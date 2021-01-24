@@ -1,8 +1,13 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { Habit } from "src/app/models/habit.model";
-import { AlertController, LoadingController } from "@ionic/angular";
+import {
+  AlertController,
+  LoadingController,
+  ModalController,
+} from "@ionic/angular";
 import { JournalService } from "src/app/services/journal.service";
 import { DateTimeService } from "src/app/services/date-time.service";
+import { TimerComponent } from "../modals/timer/timer.component";
 
 @Component({
   selector: "app-habit",
@@ -13,30 +18,31 @@ export class HabitComponent implements OnInit {
   @Input() habit: Habit;
   @Input() currentDate: Date;
   isFinished: boolean = false;
-
+  currentDateWithoutTime: Date;
+  recordDateFormat: Date;
+  recordDateWithoutTime: Date;
   constructor(
     private alertCtrl: AlertController,
     private journalSrv: JournalService,
     private loadingCtrl: LoadingController,
-    private dateTimeSrv: DateTimeService
+    private dateTimeSrv: DateTimeService,
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit() {
-    let currentDateWithoutTime: Date;
-    let recordDateFormat: Date;
-    let recordDateWithoutTime: Date;
+    this.currentDateWithoutTime = this.dateTimeSrv.dateWithouttime(
+      this.currentDate
+    );
     if (this.habit.records) {
       if (this.habit.records.length) {
-        currentDateWithoutTime = this.dateTimeSrv.dateWithouttime(
-          this.currentDate
-        );
         this.habit.records.forEach((record) => {
-          recordDateFormat = new Date(record);
-          recordDateWithoutTime = this.dateTimeSrv.dateWithouttime(
-            recordDateFormat
+          this.recordDateFormat = new Date(record);
+          this.recordDateWithoutTime = this.dateTimeSrv.dateWithouttime(
+            this.recordDateFormat
           );
           if (
-            currentDateWithoutTime.getTime() === recordDateWithoutTime.getTime()
+            this.currentDateWithoutTime.getTime() ===
+            this.recordDateWithoutTime.getTime()
           ) {
             this.isFinished = true;
           }
@@ -44,7 +50,7 @@ export class HabitComponent implements OnInit {
       }
     }
   }
-  onDeleteHabit = async (habitId: string) => {
+  onDeleteHabit = async (habitId: string, userId: string) => {
     const loading = await this.loadingCtrl.create({
       cssClass: "my-custom-class",
       message: "Please wait...",
@@ -61,7 +67,7 @@ export class HabitComponent implements OnInit {
           text: "Delete",
           handler: async () => {
             await loading.present();
-            this.journalSrv.deleteHabit(habitId).subscribe(() => {
+            this.journalSrv.deleteHabit(habitId, userId).subscribe(() => {
               this.loadingCtrl.dismiss();
             });
           },
@@ -88,7 +94,7 @@ export class HabitComponent implements OnInit {
           text: "Finished",
           handler: async () => {
             await loading.present();
-            let newHabitRecord = this.currentDate;
+            let newHabitRecord = this.currentDateWithoutTime;
             let newHabitRecords: Date[];
             if (habit.records) {
               newHabitRecords = [...habit.records, newHabitRecord];
@@ -106,4 +112,18 @@ export class HabitComponent implements OnInit {
     });
     await alert.present();
   };
+  setTimer = (habit: Habit) => {
+    this.presentTimerModal(habit);
+  };
+
+  async presentTimerModal(habit: Habit) {
+    const modal = await this.modalCtrl.create({
+      component: TimerComponent,
+      cssClass: "my-custom-class",
+      componentProps: {
+        habit,
+      },
+    });
+    return await modal.present();
+  }
 }

@@ -6,9 +6,32 @@
 <ion-content>
   <ion-grid>
     <ion-row>
-      <ion-col *ngFor="let habit of habits" size="12">
-        
-      </ion-col>
+      <ion-item class="w-100">
+        <ion-label>Average</ion-label>
+        <ion-select value="perWeek" (ionChange)="changeInterval($event)">
+          <ion-select-option value="perWeek">Last 7 days</ion-select-option>
+          <ion-select-option value="perMonth">Last 4 weeks</ion-select-option>
+          <!-- <ion-select-option value="perYear">Last 12 months</ion-select-option> -->
+        </ion-select>
+      </ion-item>
+    </ion-row>
+    <ion-row *ngIf="avgOption === 'perWeek'">
+      <app-weekly-avg [habits]="habits"></app-weekly-avg>
+    </ion-row>
+    <ion-row *ngIf="avgOption === 'perMonth'">
+      <app-monthly-avg [habits]="habits"></app-monthly-avg>
+    </ion-row>
+    <ion-row>
+      <!-- <circle-progress
+        [percent]="85"
+        [radius]="100"
+        [outerStrokeWidth]="16"
+        [innerStrokeWidth]="8"
+        [outerStrokeColor]="'#78C000'"
+        [innerStrokeColor]="'#C7E596'"
+        [animation]="true"
+        [animationDuration]="300"
+      ></circle-progress> -->
     </ion-row>
   </ion-grid>
 </ion-content>

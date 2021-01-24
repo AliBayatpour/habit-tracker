@@ -10,6 +10,8 @@ import { JournalPage } from "./journal.page";
 import { NoHabitComponent } from "src/app/components/no-habit/no-habit.component";
 import { HabitComponent } from "src/app/components/habit/habit.component";
 import { NgCalendarModule } from "ionic2-calendar";
+import { NgCircleProgressModule } from "ng-circle-progress";
+import { TimerComponent } from "src/app/components/modals/timer/timer.component";
 
 @NgModule({
   imports: [
@@ -18,7 +20,19 @@ import { NgCalendarModule } from "ionic2-calendar";
     IonicModule,
     JournalPageRoutingModule,
     NgCalendarModule,
+    NgCircleProgressModule.forRoot({
+      // set defaults here
+      radius: 100,
+      outerStrokeWidth: 16,
+      innerStrokeWidth: 8,
+      outerStrokeColor: "#78C000",
+      innerStrokeColor: "#C7E596",
+      animationDuration: 300,
+      animation: false,
+      responsive: true,
+      renderOnClick: false,
+    }),
   ],
-  declarations: [JournalPage, NoHabitComponent, HabitComponent],
+  declarations: [JournalPage, NoHabitComponent, HabitComponent, TimerComponent],
 })
 export class JournalPageModule {}

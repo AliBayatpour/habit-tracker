@@ -14,47 +14,40 @@ export class JournalService {
   fetchHabits = () => {
     let habits = [];
     let myHabits = [];
-    return this.http
-      .get<{
-        [key: string]: habitData;
-      }>(
-        "https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/habits.json"
-      )
-      .pipe(
-        map((resData) => {
-          for (const key in resData) {
-            if (resData.hasOwnProperty(key)) {
-              habits.push(
-                new Habit(
-                  key,
-                  resData[key].title,
-                  resData[key].repeat,
-                  resData[key].userId,
-                  resData[key].goals,
-                  resData[key].startDate,
-                  resData[key].records
-                )
-              );
-            }
+    return this.authSrv.userId.pipe(
+      take(1),
+      switchMap((userId) => {
+        if (!userId) {
+          throw new Error("No user id found");
+        }
+        return this.http.get<{
+          [key: string]: habitData;
+        }>(
+          `https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/${userId}.json`
+        );
+      }),
+      map((resData) => {
+        for (const key in resData) {
+          if (resData.hasOwnProperty(key)) {
+            habits.push(
+              new Habit(
+                key,
+                resData[key].title,
+                resData[key].repeat,
+                resData[key].userId,
+                resData[key].goals,
+                resData[key].startDate,
+                resData[key].records
+              )
+            );
           }
-          return habits;
-        }),
-        switchMap(() => {
-          return this.authSrv.userId;
-        }),
-        take(1),
-        map((userId) => {
-          habits.forEach((habit: Habit) => {
-            if (habit.userId === userId) {
-              myHabits.push(habit);
-            }
-          });
-          return myHabits;
-        }),
-        tap((myHabits) => {
-          this._habits.next(myHabits);
-        })
-      );
+        }
+        return habits;
+      }),
+      tap((habits) => {
+        this._habits.next(habits);
+      })
+    );
   };
   get habits() {
     return this._habits.asObservable();
@@ -69,10 +62,10 @@ export class JournalService {
       })
     );
   };
-  deleteHabit = (habitId: string) => {
+  deleteHabit = (habitId: string, userId: string) => {
     return this.http
       .delete(
-        `https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/habits/${habitId}.json`
+        `https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/${userId}/${habitId}.json`
       )
       .pipe(
         switchMap(() => {
@@ -118,7 +111,7 @@ export class JournalService {
           records
         );
         return this.http.post<{ name: string }>(
-          "https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/habits.json",
+          `https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/${userId}.json`,
           { ...newHabit, id: null }
         );
       }),
@@ -151,7 +144,7 @@ export class JournalService {
           newRecord
         );
         return this.http.put(
-          `https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/habits/${id}.json`,
+          `https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/${oldHabit.userId}/${id}.json`,
           { ...updatedHabits[updatedHabitIndex], id: null }
         );
       }),

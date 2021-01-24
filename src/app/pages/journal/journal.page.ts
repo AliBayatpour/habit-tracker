@@ -26,7 +26,6 @@ export class JournalPage implements OnInit, OnDestroy {
     "Saturday",
   ];
   private habitsSub: Subscription;
-  private currentHabitsSub: Subscription;
   constructor(
     private journalSrv: JournalService,
     private dateTimeSrv: DateTimeService
@@ -35,8 +34,7 @@ export class JournalPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.habitsSub = this.journalSrv.habits.subscribe((habits) => {
       this.habits = habits;
-      let todayDate = new Date();
-      this.setHabits(todayDate);
+      this.setHabits(this.currentDate);
     });
   }
   ionViewWillEnter() {
@@ -44,11 +42,6 @@ export class JournalPage implements OnInit, OnDestroy {
     this.journalSrv.fetchHabits().subscribe((resData) => {
       this.isLoading = false;
     });
-  }
-  ngOnDestroy() {
-    if (this.habitsSub) {
-      this.habitsSub.unsubscribe();
-    }
   }
   eventSource = [];
   calendar = {
@@ -85,4 +78,9 @@ export class JournalPage implements OnInit, OnDestroy {
       }
     });
   };
+  ngOnDestroy() {
+    if (this.habitsSub) {
+      this.habitsSub.unsubscribe();
+    }
+  }
 }

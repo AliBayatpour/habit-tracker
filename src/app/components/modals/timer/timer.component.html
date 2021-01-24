@@ -1,0 +1,20 @@
+<ion-grid>
+  <ion-row>
+    <circle-progress (click)="startTimer()"
+      [percent]="percent"
+      [maxPercent]="100"
+      [radius]="radius"
+      [showTitle]="true"
+      [showSubtitle]="false"
+      [showUnits]="false"
+      [outerStrokeWidth]="16"
+      [outerStrokeColor]="'#8000ff'"
+      [showZeroOuterStroke]="false"
+      [backgroundStroke]="'#33003f'"
+      [backgroundStrokeWidth]="3"
+      [outerStrokeGradient]="true"
+      [outerStrokeGradientStopColor]="'#ff00cb'"
+      [showInnerStroke]="false"
+    ></circle-progress>
+  </ion-row>
+</ion-grid>

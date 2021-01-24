@@ -1,0 +1,25 @@
+<ion-row>
+  <ion-col *ngFor="let weeklyAvg of weeklyAvgs; let i = index" size="12">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>{{ weeklyAvg.habitTitle }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-item>
+        <ion-label>Average per day</ion-label>
+        {{ weeklyAvg.dailyAvgPerLast7Days }} minutes
+      </ion-item>
+      <ion-card-content>
+        <canvas
+          baseChart
+          [datasets]="barChartsData[i]"
+          [labels]="barChartsLabels"
+          [options]="barChartOptions"
+          [plugins]="barChartPlugins"
+          [legend]="barChartLegend"
+          [chartType]="barChartType"
+        >
+        </canvas>
+      </ion-card-content>
+    </ion-card>
+  </ion-col>
+</ion-row>
