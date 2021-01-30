@@ -126,7 +126,16 @@ export class JournalService {
       })
     );
   };
-  updateHabit = (id: string, newRecord: Date[]) => {
+  updateHabit = (
+    id: string,
+    repeat: string[],
+    goals: {
+      numOption: string;
+      unit: "mins" | "times";
+      perUnit: "day" | "week" | "month";
+    },
+    records: { date: Date; time: number; target: number }[]
+  ) => {
     let updatedHabits: Habit[];
     return this.habits.pipe(
       take(1),
@@ -134,15 +143,26 @@ export class JournalService {
         const updatedHabitIndex = habits.findIndex((habit) => habit.id === id);
         updatedHabits = [...habits];
         const oldHabit = updatedHabits[updatedHabitIndex];
-        updatedHabits[updatedHabitIndex] = new Habit(
-          oldHabit.id,
-          oldHabit.title,
-          oldHabit.repeat,
-          oldHabit.userId,
-          oldHabit.goals,
-          oldHabit.startDate,
-          newRecord
-        );
+        if (records) {
+          updatedHabits[updatedHabitIndex] = new Habit(
+            oldHabit.id,
+            oldHabit.title,
+            repeat,
+            oldHabit.userId,
+            goals,
+            oldHabit.startDate,
+            records
+          );
+        } else {
+          updatedHabits[updatedHabitIndex] = new Habit(
+            oldHabit.id,
+            oldHabit.title,
+            repeat,
+            oldHabit.userId,
+            goals,
+            oldHabit.startDate
+          );
+        }
         return this.http.put(
           `https://habit-tracker-3c91a-default-rtdb.europe-west1.firebasedatabase.app/${oldHabit.userId}/${id}.json`,
           { ...updatedHabits[updatedHabitIndex], id: null }

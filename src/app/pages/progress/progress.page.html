@@ -16,22 +16,14 @@
       </ion-item>
     </ion-row>
     <ion-row *ngIf="avgOption === 'perWeek'">
-      <app-weekly-avg [habits]="habits"></app-weekly-avg>
+      <div class="w-100">
+        <app-weekly-avg [habits]="habits"></app-weekly-avg>
+      </div>
     </ion-row>
     <ion-row *ngIf="avgOption === 'perMonth'">
-      <app-monthly-avg [habits]="habits"></app-monthly-avg>
-    </ion-row>
-    <ion-row>
-      <!-- <circle-progress
-        [percent]="85"
-        [radius]="100"
-        [outerStrokeWidth]="16"
-        [innerStrokeWidth]="8"
-        [outerStrokeColor]="'#78C000'"
-        [innerStrokeColor]="'#C7E596'"
-        [animation]="true"
-        [animationDuration]="300"
-      ></circle-progress> -->
+      <div class="w-100">
+        <app-monthly-avg [habits]="habits"></app-monthly-avg>
+      </div>
     </ion-row>
   </ion-grid>
 </ion-content>

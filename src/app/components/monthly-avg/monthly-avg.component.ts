@@ -33,7 +33,6 @@ export class MonthlyAvgComponent implements OnInit {
       const cur = chng.currentValue;
       this.updatedHabits = cur;
     }
-    console.log(this.updatedHabits);
     this.progressCalculator(this.updatedHabits);
   }
 
@@ -45,7 +44,6 @@ export class MonthlyAvgComponent implements OnInit {
         this.barChartsLabels[3 - idx] = `${weekDay.month}${weekDay.dateNum}`;
       }
     );
-    console.log(this.barChartsLabels);
     // CALCULATE MONTHLY AVG
     // CALCULATE MONTHLY REPORT ON EACH CHART
     this.monthlyAvgs = [];

@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Habit } from "src/app/models/habit.model";
 import { JournalService } from "src/app/services/journal.service";
-import { AlertController, LoadingController } from "@ionic/angular";
 import { Subscription } from "rxjs";
-import { habitService } from "src/app/services/habit.service";
 import { DateTimeService } from "src/app/services/date-time.service";
 
 @Component({

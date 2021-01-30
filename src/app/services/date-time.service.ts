@@ -22,15 +22,15 @@ export class DateTimeService {
       prevDay.getMonth(),
       prevDay.getDate() - 7
     );
-    let records = [];
-    habit.records.forEach((record) => {
-      let recordDate = new Date(record);
+    let records: { date: Date; time: number }[] = [];
+    habit.records.forEach((record, idx) => {
+      let recordDate = new Date(record.date);
       if (
         recordDate.getTime() >= last7Days.getTime() &&
         recordDate.getTime() <= prevDay.getTime()
       ) {
-        records.push(recordDate);
-        accomplishedTime = accomplishedTime + Number(habit.goals.numOption);
+        records.push({ date: recordDate, time: record.time });
+        accomplishedTime = accomplishedTime + Number(habit.records[idx].time);
       }
     });
     return {
@@ -99,32 +99,28 @@ export class DateTimeService {
     );
     let records = [];
     habit.records.forEach((record) => {
-      let recordDate = new Date(record);
+      let recordDate = new Date(record.date);
       if (
         recordDate.getTime() >= last28Days.getTime() &&
         recordDate.getTime() <= today.getTime()
       ) {
         if (recordDate.getTime() <= this.getLast4Weeks()[3].date.getTime()) {
-          weeklyReport.week1 =
-            weeklyReport.week1 + Number(habit.goals.numOption);
+          weeklyReport.week1 = weeklyReport.week1 + Number(record.time);
         } else if (
           recordDate.getTime() <= this.getLast4Weeks()[2].date.getTime()
         ) {
-          weeklyReport.week2 =
-            weeklyReport.week2 + Number(habit.goals.numOption);
+          weeklyReport.week2 = weeklyReport.week2 + Number(record.time);
         } else if (
           recordDate.getTime() <= this.getLast4Weeks()[1].date.getTime()
         ) {
-          weeklyReport.week3 =
-            weeklyReport.week3 + Number(habit.goals.numOption);
+          weeklyReport.week3 = weeklyReport.week3 + Number(record.time);
         } else if (
           recordDate.getTime() <= this.getLast4Weeks()[0].date.getTime()
         ) {
-          weeklyReport.week4 =
-            weeklyReport.week4 + Number(habit.goals.numOption);
+          weeklyReport.week4 = weeklyReport.week4 + Number(record.time);
         }
         records.push(recordDate);
-        accomplishedTime = accomplishedTime + Number(habit.goals.numOption);
+        accomplishedTime = accomplishedTime + Number(record.time);
       }
     });
     return {
@@ -139,28 +135,5 @@ export class DateTimeService {
         accomplishedTime % 60
       }m`,
     };
-  };
-
-  getLastYearMonths = () => {
-    let today = new Date();
-    let yesterday = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - 1
-    );
-    let last4Weeks = [];
-    for (let i = 0; i <= 3; i++) {
-      let prevWeek = new Date(
-        yesterday.getFullYear(),
-        yesterday.getMonth(),
-        yesterday.getDate() - i * 7
-      );
-      last4Weeks.push({
-        date: prevWeek,
-        dateNum: prevWeek.getDate(),
-        month: prevWeek.toLocaleString("default", { month: "short" }),
-      });
-    }
-    return last4Weeks;
   };
 }

@@ -1,20 +1,84 @@
-<ion-grid>
-  <ion-row>
-    <circle-progress (click)="startTimer()"
-      [percent]="percent"
-      [maxPercent]="100"
-      [radius]="radius"
-      [showTitle]="true"
-      [showSubtitle]="false"
-      [showUnits]="false"
-      [outerStrokeWidth]="16"
-      [outerStrokeColor]="'#8000ff'"
-      [showZeroOuterStroke]="false"
-      [backgroundStroke]="'#33003f'"
-      [backgroundStrokeWidth]="3"
-      [outerStrokeGradient]="true"
-      [outerStrokeGradientStopColor]="'#ff00cb'"
-      [showInnerStroke]="false"
-    ></circle-progress>
-  </ion-row>
-</ion-grid>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Timer</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid class="ion-no-padding">
+    <ion-row style="color: #000000">
+      <div
+        class="timerContainer d-flex align-items-center justify-content-center"
+      >
+        <circle-progress
+          [percent]="percent"
+          [maxPercent]="100"
+          [radius]="radius"
+          [title]="timeRemained"
+          [titleColor]="'#36abe0'"
+          [titleFontSize]="'30'"
+          [titleFontWeight]="'700'"
+          [showTitle]="true"
+          [showSubtitle]="false"
+          [showUnits]="false"
+          [outerStrokeWidth]="16"
+          [outerStrokeColor]="'#3880ff'"
+          [showZeroOuterStroke]="false"
+          [backgroundStrokeWidth]="3"
+          [outerStrokeGradient]="true"
+          [outerStrokeGradientStopColor]="'#3dc2ff'"
+          [showInnerStroke]="false"
+        ></circle-progress>
+      </div>
+    </ion-row>
+    <ion-row>
+      <div class="w-100 d-flex justify-content-center">
+        <ion-button
+          *ngIf="timerStatus === 'start'"
+          color="primary"
+          fill="outline"
+          (click)="startTimer()"
+          class="mx-3"
+          >Start</ion-button
+        >
+        <ion-button
+          color="secondary"
+          slot="icon-only"
+          fill="outline"
+          (click)="resumeTimer()"
+          *ngIf="timerStatus === 'resume'"
+          class="mx-3"
+          ><ion-icon name="play"></ion-icon
+        ></ion-button>
+        <ion-button
+          color="medium"
+          slot="icon-only"
+          fill="outline"
+          (click)="pauseTimer()"
+          *ngIf="timerStatus === 'pause'"
+          class="mx-3"
+        >
+          <ion-icon name="pause"></ion-icon>
+        </ion-button>
+        <ion-button
+          color="tertiary"
+          slot="icon-only"
+          fill="outline"
+          (click)="restartTimerAlert()"
+          *ngIf="timerStatus !== 'start'"
+          class="mx-3"
+        >
+          <ion-icon name="refresh"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-row>
+    <ion-button
+      class="dismissBut position-absolute"
+      color="danger"
+      fill="clear"
+      expand="full"
+      (click)="dismissModalAlert()"
+      >Dismiss</ion-button
+    >
+  </ion-grid>
+</ion-content>

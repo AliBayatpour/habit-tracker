@@ -3,14 +3,20 @@
     <ion-icon
       slot="start"
       name="checkmark-circle"
-      color="primary"
-      *ngIf="isFinished"
+      [color]="isFinished ? 'primary' : 'warning'"
+      *ngIf="isFinished || isPartlyFinished"
+    ></ion-icon>
+    <ion-icon
+      slot="start"
+      name="close-circle"
+      *ngIf="notFinished"
+      color="danger"
     ></ion-icon>
     <ion-icon
       slot="start"
       name="checkmark-circle-outline"
       color="primary"
-      *ngIf="!isFinished"
+      *ngIf="!isFinished && !isPartlyFinished && !notFinished"
     ></ion-icon>
     <div class="d-flex flex-column">
       <ion-text>
@@ -18,28 +24,43 @@
       </ion-text>
       <ion-text color="medium" class="subTitle">
         <ion-label
-          >{{ isFinished ? habit.goals.numOption : 0 }}/{{
-            habit.goals.numOption
+          >{{
+            isFinished
+              ? habit.goals.numOption
+              : isPartlyFinished
+              ? recordTime
+              : 0
           }}
-          {{ habit.goals.unit }} today</ion-label
+          {{
+            !notFinished && !targetIsForToday && recordTarget
+              ? "/ " + recordTarget
+              : targetIsForToday ||
+                (!notFinished && !isPartlyFinished && !isFinished)
+              ? "/ " + habit.goals.numOption
+              : ""
+          }}
+          {{ habit.goals.unit }}</ion-label
         >
       </ion-text>
     </div>
   </ion-item>
   <ion-item-options side="end">
-    <ion-item-option color="danger" (click)="onDeleteHabit(habit.id, habit.userId)"
-      >Delete</ion-item-option
+    <ion-item-option
+      color="tertiary"
+      (click)="presentEditModal(habit)"
+      [disabled]="isFinished || isPartlyFinished || notFinished"
+      >Edit Habit</ion-item-option
     >
     <ion-item-option
       color="primary"
-      (click)="onFinishedHabit(habit)"
-      [disabled]="isFinished"
+      (click)="onFinishHabit(habit)"
+      [disabled]="!targetIsForToday"
       >Finished</ion-item-option
     >
     <ion-item-option
       color="secondary"
       (click)="setTimer(habit)"
-      [disabled]="isFinished"
+      [disabled]="!targetIsForToday"
       >Timer</ion-item-option
     >
   </ion-item-options>

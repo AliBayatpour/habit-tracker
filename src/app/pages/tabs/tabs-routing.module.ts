@@ -18,6 +18,7 @@ const routes: Routes = [
               import("../journal/journal.module").then(
                 (m) => m.JournalPageModule
               ),
+            canLoad: [AuthGuard],
           },
         ],
       },
@@ -30,6 +31,7 @@ const routes: Routes = [
               import("../progress/progress.module").then(
                 (m) => m.ProgressPageModule
               ),
+            canLoad: [AuthGuard],
           },
         ],
       },
@@ -42,6 +44,7 @@ const routes: Routes = [
               import("../settings/settings.module").then(
                 (m) => m.SettingsPageModule
               ),
+            canLoad: [AuthGuard],
           },
         ],
       },

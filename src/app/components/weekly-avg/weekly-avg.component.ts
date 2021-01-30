@@ -55,14 +55,12 @@ export class WeeklyAvgComponent implements OnInit {
           this.weeklyAvgs.push(habitAvg);
           let chartData = [0, 0, 0, 0, 0, 0, 0];
           lastSevenDays.forEach((el, idx) => {
-            habitAvg.records.forEach((record: Date) => {
+            habitAvg.records.forEach((record: { date: Date; time: number }) => {
               if (
                 this.dateTimeSrv.dateWithouttime(el.date).getTime() ===
-                this.dateTimeSrv.dateWithouttime(record).getTime()
+                this.dateTimeSrv.dateWithouttime(record.date).getTime()
               ) {
-                chartData[chartData.length - 1 - idx] = Number(
-                  habit.goals.numOption
-                );
+                chartData[chartData.length - 1 - idx] = Number(record.time);
               }
             });
           });

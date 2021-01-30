@@ -12,6 +12,7 @@ import { HabitComponent } from "src/app/components/habit/habit.component";
 import { NgCalendarModule } from "ionic2-calendar";
 import { NgCircleProgressModule } from "ng-circle-progress";
 import { TimerComponent } from "src/app/components/modals/timer/timer.component";
+import { EditHabitComponent } from 'src/app/components/modals/edit-habit/edit-habit.component';
 
 @NgModule({
   imports: [
@@ -33,6 +34,6 @@ import { TimerComponent } from "src/app/components/modals/timer/timer.component"
       renderOnClick: false,
     }),
   ],
-  declarations: [JournalPage, NoHabitComponent, HabitComponent, TimerComponent],
+  declarations: [JournalPage, NoHabitComponent, HabitComponent, TimerComponent, EditHabitComponent],
 })
 export class JournalPageModule {}

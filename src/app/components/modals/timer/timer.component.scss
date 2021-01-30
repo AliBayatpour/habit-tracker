@@ -1,3 +1,9 @@
-.s {
-    color: #8000ff;
-}
+.timerContainer {
+    width: 100vw;
+  }
+  .dismissBut {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  

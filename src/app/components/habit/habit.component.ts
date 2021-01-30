@@ -8,6 +8,7 @@ import {
 import { JournalService } from "src/app/services/journal.service";
 import { DateTimeService } from "src/app/services/date-time.service";
 import { TimerComponent } from "../modals/timer/timer.component";
+import { EditHabitComponent } from "../modals/edit-habit/edit-habit.component";
 
 @Component({
   selector: "app-habit",
@@ -18,9 +19,14 @@ export class HabitComponent implements OnInit {
   @Input() habit: Habit;
   @Input() currentDate: Date;
   isFinished: boolean = false;
+  isPartlyFinished: boolean = false;
+  notFinished: boolean = false;
   currentDateWithoutTime: Date;
   recordDateFormat: Date;
   recordDateWithoutTime: Date;
+  recordTime: number;
+  recordTarget: number;
+  targetIsForToday: boolean = false;
   constructor(
     private alertCtrl: AlertController,
     private journalSrv: JournalService,
@@ -30,13 +36,17 @@ export class HabitComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    let todayWitoutTime = this.dateTimeSrv.dateWithouttime(new Date());
     this.currentDateWithoutTime = this.dateTimeSrv.dateWithouttime(
       this.currentDate
     );
+    if (todayWitoutTime.getTime() === this.currentDateWithoutTime.getTime()) {
+      this.targetIsForToday = true;
+    }
     if (this.habit.records) {
       if (this.habit.records.length) {
         this.habit.records.forEach((record) => {
-          this.recordDateFormat = new Date(record);
+          this.recordDateFormat = new Date(record.date);
           this.recordDateWithoutTime = this.dateTimeSrv.dateWithouttime(
             this.recordDateFormat
           );
@@ -44,10 +54,23 @@ export class HabitComponent implements OnInit {
             this.currentDateWithoutTime.getTime() ===
             this.recordDateWithoutTime.getTime()
           ) {
-            this.isFinished = true;
+            this.recordTarget = record.target;
+            this.recordTime = record.time;
+            if (record.time === Number(this.habit.goals.numOption)) {
+              this.isFinished = true;
+            } else if (record.time > 0) {
+              this.isPartlyFinished = true;
+            }
           }
         });
       }
+    }
+    if (
+      this.currentDateWithoutTime.getTime() < todayWitoutTime.getTime() &&
+      !this.isFinished &&
+      !this.isPartlyFinished
+    ) {
+      this.notFinished = true;
     }
   }
   onDeleteHabit = async (habitId: string, userId: string) => {
@@ -76,7 +99,7 @@ export class HabitComponent implements OnInit {
     });
     await alert.present();
   };
-  onFinishedHabit = async (habit: Habit) => {
+  onFinishHabit = async (habit: Habit) => {
     const loading = await this.loadingCtrl.create({
       cssClass: "my-custom-class",
       message: "Please wait...",
@@ -94,15 +117,19 @@ export class HabitComponent implements OnInit {
           text: "Finished",
           handler: async () => {
             await loading.present();
-            let newHabitRecord = this.currentDateWithoutTime;
-            let newHabitRecords: Date[];
+            let newHabitRecord = {
+              date: this.currentDateWithoutTime,
+              time: Number(habit.goals.numOption),
+              target: Number(habit.goals.numOption),
+            };
+            let newHabitRecords: { date: Date; time: number; target: number }[];
             if (habit.records) {
               newHabitRecords = [...habit.records, newHabitRecord];
             } else {
               newHabitRecords = [newHabitRecord];
             }
             this.journalSrv
-              .updateHabit(habit.id, newHabitRecords)
+              .updateHabit(habit.id, habit.repeat, habit.goals, newHabitRecords)
               .subscribe((resData) => {
                 this.loadingCtrl.dismiss();
               });
@@ -119,6 +146,17 @@ export class HabitComponent implements OnInit {
   async presentTimerModal(habit: Habit) {
     const modal = await this.modalCtrl.create({
       component: TimerComponent,
+      cssClass: "my-custom-class",
+      componentProps: {
+        habit,
+      },
+    });
+    return await modal.present();
+  }
+
+  async presentEditModal(habit: Habit) {
+    const modal = await this.modalCtrl.create({
+      component: EditHabitComponent,
       cssClass: "my-custom-class",
       componentProps: {
         habit,
