@@ -1,5 +1,9 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { PickerController, LoadingController } from "@ionic/angular";
+import {
+  PickerController,
+  LoadingController,
+  ModalController,
+} from "@ionic/angular";
 import { habitService } from "src/app/services/habit.service";
 import { JournalService } from "src/app/services/journal.service";
 import { Router } from "@angular/router";
@@ -18,7 +22,8 @@ export class EditHabitComponent implements OnInit {
     private pickerController: PickerController,
     private journalSrv: JournalService,
     private router: Router,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private modalController: ModalController
   ) {}
 
   ngOnInit() {}
@@ -138,5 +143,10 @@ export class EditHabitComponent implements OnInit {
         this.loadingCtrl.dismiss();
         this.router.navigate(["/"]);
       });
+  };
+  dismissModal = () => {
+    this.modalController.dismiss({
+      dismissed: true,
+    });
   };
 }

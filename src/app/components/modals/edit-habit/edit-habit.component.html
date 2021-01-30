@@ -1,15 +1,10 @@
 <ion-header>
   <ion-toolbar>
     <div class="d-flex align-items-center">
-      <ion-buttons slot="start" class="pl-2 mr-2">
-        <ion-back-button
-          color="dark"
-          icon="close"
-          text=""
-          defaultHref="/new-habit"
-        ></ion-back-button>
-      </ion-buttons>
-      <ion-text>New Habit</ion-text>
+      <ion-button fill="clear" color="primary" (click)="dismissModal()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+      <ion-text>Edit Habit</ion-text>
       <ion-button
         fill="clear"
         class="ml-auto addHabit"
